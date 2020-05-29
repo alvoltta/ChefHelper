@@ -4,7 +4,8 @@ namespace Volta.ChefHelperBL.Model
     /// <summary>
     /// Organization.
     /// </summary>
-    class Organization
+    [Serializable]
+    public class Organization
     {
         #region Properties
         /// <summary>
