@@ -37,6 +37,17 @@ namespace Volta.ChefHelperBL.Model
             Comment = comment;
 
         }
+
+        public Organization(string name)
+        {
+            #region check1
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentNullException("Name of organization cannot be empty or null");
+            }
+            #endregion
+            Name = name;
+        }
         public override string ToString()
         {
             return Name;
