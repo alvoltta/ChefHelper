@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using Volta.ChefHelperBL.Model;
@@ -13,15 +14,33 @@ namespace Volta.ChefHelperBL.Controller
         /// <summary>
         /// App Organization.
         /// </summary>
-        public Organization Organization { get; }
+        public List<Organization> Organizations { get; }
         /// <summary>
         /// Creating new Organization controller.
         /// </summary>
         /// <param name="organization"></param>
         public OrganizationController(string name, string comment)
         {
-            var organization = new Organization(name, comment);
-                Organization = organization ?? throw new ArgumentNullException("Name of organization cannot be null", nameof(organization));
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentNullException("Name of organization cannot be null", nameof(name));
+            }
+            Organizations = GetOrgData();
+        }
+        private List<Organization> GetOrgData()
+        {
+            var formatter = new BinaryFormatter();
+            using (var filestream = new FileStream("Orgs.dat", FileMode.OpenOrCreate))
+            {
+                if (formatter.Deserialize(filestream) is List<Organization> organizations)
+                {
+                    return organizations;
+                }
+                else 
+                {
+                    return new List<Organization>();
+                }
+            }
         }
         /// <summary>
         /// Saving Orgs Data.
@@ -31,7 +50,7 @@ namespace Volta.ChefHelperBL.Controller
             var formatter = new BinaryFormatter();
             using (var filestream = new FileStream("Orgs.dat", FileMode.OpenOrCreate))
             {
-                formatter.Serialize(filestream, Organization);
+                formatter.Serialize(filestream, Organizations);
             }
         }
         /// <summary>
@@ -43,9 +62,9 @@ namespace Volta.ChefHelperBL.Controller
             var formatter = new BinaryFormatter();
             using (var filestream = new FileStream("Orgs.dat", FileMode.OpenOrCreate))
             {
-                if (formatter.Deserialize(filestream) is Organization organization)
+                if (formatter.Deserialize(filestream) is List<Organization> organizations)
                 {
-                    Organization = organization;
+                    Organizations = organizations;
                 }
 
                 // TODO: What should to do if Organization data was not read?
